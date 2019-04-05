@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import tf
+import tensorflow as tf
 import copy
 
 class CNNGraph(object):
@@ -83,14 +83,15 @@ class CNNGraph(object):
         layer_input_channels = input_channels
         # create all the conv layers
         for conv_filter_size, conv_num_filters in zip(conv_filter_sizes, conv_nums_filters):
-            conv_layer = self.create_convolution_layer(input=layer_input,
+            conv_layer = self.create_convolution_layer(input_data=layer_input,
                                                        num_input_channels=layer_input_channels,
                                                        conv_filter_size=conv_filter_size,
                                                        num_filters=conv_num_filters)
-            layer_input = copy.deepcopy(conv_layer)
+            layer_input = conv_layer
             layer_input_channels = conv_num_filters
             self.conv_layers.append(conv_layer)
 
+        print(self.conv_layers)
         # create the flat layer
         self.layer_flat = self.create_flatten_layer(self.conv_layers[-1])
 
@@ -102,7 +103,7 @@ class CNNGraph(object):
                                             input_dim=layer_input_dim,
                                             output_dim=fc_layer_size,
                                             use_relu=True)
-            layer_input = copy.deepcopy(fc_layer)
+            layer_input = fc_layer
             layer_input_dim = fc_layer_size
             self.fc_layers.append(fc_layer)
 

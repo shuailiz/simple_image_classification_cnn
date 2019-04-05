@@ -4,7 +4,7 @@ import os
 import cv2
 import glob
 from sklearn.utils import shuffle
-import numpy
+import numpy as np
 
 class DataProcesser(object):
 
@@ -40,7 +40,7 @@ class DataProcesser(object):
         input_data: the data read from the folder
         '''
         for class_name in self.class_names:
-            data_path = os.path.join(folder, class_name, '*g')
+            data_path = os.path.join(folder_path, class_name, '*g')
             data_files = glob.glob(data_path)
             for data_file in data_files:
                 image = cv2.imread(data_file)
@@ -51,13 +51,17 @@ class DataProcesser(object):
                 # convert the pixle values to be between 0 and 1
                 image = np.multiply(image, 1.0/255.0)
                 label = np.zeros(len(self.class_names))
-                label(class_names.index(class_name)) = 1.0
+                label[self.class_names.index(class_name)] = 1.0
                 cl = class_name
                 self.images.append(image)
                 self.labels.append(label)
                 self.cls.append(cl)
-                self.image_names(os.path.basename(data_file))
+                self.image_names.append(os.path.basename(data_file))
 
+        self.images = np.array(self.images)
+        self.labels = np.array(self.labels)
+        self.image_names = np.array(self.image_names)
+        self.cls = np.array(self.cls)
         self.images, self.labels, self.cls, self.image_names = shuffle(self.images, self.labels, self.cls, self.image_names)
         self.total_num_data_points = len(self.cls)
         self.data_loaded = True
